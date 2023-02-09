@@ -27,13 +27,13 @@ async def on_ready():
         # サーバー毎にpingを行い結果を取得
         ping_results = []
         for server_name, server_ip in server_list:
-            response = os.system("ping " + server_ip)
+            response = os.system(f"ping {server_ip}")
             # 取得した結果を変数に代入
             if response == 0:
-                ping_status = "UP"
+                ping_status = "✅UP"
                 color = 0x00FF00
             else:
-                ping_status = "DOWN"
+                ping_status = "🛑DOWN"
                 color = 0xFF0000
             ping_results.append((server_name, ping_status, color))
 
@@ -52,8 +52,8 @@ async def on_ready():
         )
         # 結果をFieldsに追加
         for server_name, ping_status, color in ping_results:
-            embed_data.add_field(name=server_name, value=ping_status, inline=False)
-        embed_data.add_field(name="Updated Time", value=now_time, inline=True)
+            embed_data.add_field(name=server_name, value=ping_status, inline=True)
+        embed_data.set_footer(text="Updated: " + now_time)
 
         # チャンネルを取得
         channel = client.get_channel(000000000000000)
@@ -69,13 +69,12 @@ async def on_ready():
             # 存在する場合は編集
             # サーバー毎の結果によってエンベッドの色を変更
             # DOWNが一つでもあれば赤色をセット
-            for _, ping_status, color in ping_results:
-                if ping_status == "DOWN":
-                    embed_data.color = 0xFF0000
+            color = 0x00FF00
+            for _, ping_status, _ in ping_results:
+                if ping_status == "🛑DOWN":
+                    color = 0xFF0000
                     break
-            else:
-                # DOWNがなければ緑色をセット
-                embed_data.color = 0x00FF00
+            embed_data.color = color
             await message.edit(embed=embed_data)
 
         # 30秒待機
