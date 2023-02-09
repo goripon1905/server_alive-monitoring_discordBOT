@@ -1,0 +1,2 @@
+# server_alive-monitoring_discordBOT
+discordでサーバーの死活監視(ping)を定期的に自動で行うことのできるBOTです
