@@ -98,5 +98,42 @@ async def on_message(message):
         else:
             # ユーザーに反応
             await message.channel.send("サーバー名とIPアドレスを入力してください！")
+    
+    if message.content.startswith("!server_remove"):
+        # コマンドを分割
+        command = message.content.split(" ")
+        if len(command) == 2:
+            # コマンドからサーバー名を取得
+            server_name = command[1]
+            # 全てのサーバー情報を取得
+            server_list = []
+            with open("server_list.txt") as f:
+                for line in f:
+                    # 1行ずつサーバー情報を保存
+                    server_name_2, server_ip = line.split(",")
+                    server_list.append((server_name_2, server_ip))
+            # 削除対象のサーバー情報を取得
+            remove_server = None
+            for server in server_list:
+                if server[0] == server_name:
+                    remove_server = server
+                    break
+            else:
+                # ユーザーに反応
+                await message.channel.send("サーバーが存在しません！")
+            # 削除対象のサーバー情報が存在する場合
+            if remove_server != None:
+                # サーバー情報をファイルから削除
+                with open("server_list.txt", "r") as f:
+                    lines = f.readlines()
+                with open("server_list.txt", "w") as f:
+                    for line in lines:
+                        if remove_server[0]+","+remove_server[1] not in line:
+                            f.write(line)
+                # ユーザーに反応
+                await message.channel.send("サーバーを削除しました！")
+        else:
+            # ユーザーに反応
+            await message.channel.send("サーバー名を入力してください！")
 
 client.run("トークンをここに入れてください")
